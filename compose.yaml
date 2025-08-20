@@ -100,6 +100,14 @@ services:
       - APP__HEALTH_ACCESS_KEY=${OPENCTI_HEALTHCHECK_ACCESS_KEY}
     ports:
       - "8080:8080"
+    networks:
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.opencti.rule=Host(`${HTTPS_DOMAIN}`)"
+      - "traefik.http.routers.opencti.entrypoints=websecure"
+      - "traefik.http.routers.opencti.tls.certresolver=letsencrypt"
+      - "traefik.http.services.opencti.loadbalancer.server.port=8080"
     depends_on:
       redis:
         condition: service_healthy
