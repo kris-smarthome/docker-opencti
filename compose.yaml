@@ -113,7 +113,7 @@ services:
       - PROVIDERS__LOCAL__STRATEGY=LocalStrategy
       - APP__HEALTH_ACCESS_KEY=${OPENCTI_HEALTHCHECK_ACCESS_KEY}
     ports:
-      - "8080:8080"
+      - "8080:8081"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.opencti.rule=Host(`${HTTPS_DOMAIN}`)"
