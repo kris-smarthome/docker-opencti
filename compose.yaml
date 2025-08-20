@@ -144,9 +144,9 @@ services:
     depends_on:
       opencti:
         condition: service_healthy
-    deploy:
-      mode: replicated
-      replicas: 3
+    #deploy:
+    #  mode: replicated
+    #  replicas: 3
     restart: always
     networks:
       - opencti
