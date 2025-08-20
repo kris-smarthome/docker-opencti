@@ -257,3 +257,10 @@ volumes:
   redisdata:
   amqpdata:
 
+networks:
+  opencti:
+    name: "opencti"
+    driver: bridge
+  traefik:
+    name: "traefik"
+    external: true
