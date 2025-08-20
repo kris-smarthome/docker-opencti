@@ -106,6 +106,8 @@ services:
       - SMTP__PORT=25
       - PROVIDERS__LOCAL__STRATEGY=LocalStrategy
       - APP__HEALTH_ACCESS_KEY=${OPENCTI_HEALTHCHECK_ACCESS_KEY}
+      - APP__GRAPHQL__PLAYGROUND__ENABLED=true
+      - APP__GRAPHQL__PLAYGROUND__FORCE_DISABLED_INTROSPECTION=false
     #ports:
     #  - "8080:8080"
     networks:
