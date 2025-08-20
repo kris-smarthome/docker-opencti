@@ -106,8 +106,8 @@ services:
       - SMTP__PORT=25
       - PROVIDERS__LOCAL__STRATEGY=LocalStrategy
       - APP__HEALTH_ACCESS_KEY=${OPENCTI_HEALTHCHECK_ACCESS_KEY}
-    ports:
-      - "8080:8080"
+    #ports:
+    #  - "8080:8080"
     networks:
       - traefik
       - opencti
