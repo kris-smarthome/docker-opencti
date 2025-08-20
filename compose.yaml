@@ -1,7 +1,6 @@
 services:
   redis:
     image: redis:8.0.3
-    container_name: redis_opencti
     restart: always
     volumes:
       - redisdata:/data
@@ -10,15 +9,15 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
-    networks:
-      - opencti
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.18.3
-    container_name: elasticsearch_opencti
     volumes:
       - esdata:/usr/share/elasticsearch/data
     environment:
+      # Comment-out the line below for a cluster of multiple nodes
       - discovery.type=single-node
+      # Uncomment the line below below for a cluster of multiple nodes
+      # - cluster.name=docker-cluster
       - xpack.ml.enabled=false
       - xpack.security.enabled=false
       - thread_pool.search.queue_size=5000
@@ -37,11 +36,8 @@ services:
       interval: 5s
       timeout: 3s
       retries: 50
-    networks:
-      - opencti
   minio:
     image: minio/minio:RELEASE.2025-06-13T11-33-47Z
-    container_name: minio_opencti
     volumes:
       - s3data:/data
     ports:
@@ -56,12 +52,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
-    networks:
-      - opencti
-
   rabbitmq:
     image: rabbitmq:4.1-management
-    container_name: rabbitmq_opencti
     environment:
       - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
@@ -77,11 +69,8 @@ services:
       interval: 30s
       timeout: 30s
       retries: 3
-    networks:
-      - opencti
   opencti:
     image: opencti/platform:6.7.12
-    container_name: opencti
     environment:
       - NODE_OPTIONS=--max-old-space-size=8096
       - APP__PORT=8080
@@ -90,12 +79,9 @@ services:
       - APP__ADMIN__PASSWORD=${OPENCTI_ADMIN_PASSWORD}
       - APP__ADMIN__TOKEN=${OPENCTI_ADMIN_TOKEN}
       - APP__APP_LOGS__LOGS_LEVEL=error
-      #- APP__HTTPS_CERT__KEY=key_file.key
-      #- APP__HTTPS_CERT__CRT=cert_file.crt
-      #- APP__HTTPS_CERT__REJECT_UNAUTHORIZED=false
       - REDIS__HOSTNAME=redis
       - REDIS__PORT=6379
-      - ELASTICSEARCH__URL=${HTTPS_DOMAIN}
+      - ELASTICSEARCH__URL=http://elasticsearch:9200
       - ELASTICSEARCH__NUMBER_OF_REPLICAS=0
       - MINIO__ENDPOINT=minio
       - MINIO__PORT=9000
@@ -114,12 +100,6 @@ services:
       - APP__HEALTH_ACCESS_KEY=${OPENCTI_HEALTHCHECK_ACCESS_KEY}
     ports:
       - "8080:8080"
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.opencti.rule=Host(`${HTTPS_DOMAIN}`)"
-      - "traefik.http.routers.opencti.entrypoints=websecure"
-      - "traefik.http.routers.opencti.tls.certresolver=letsencrypt"
-      - "traefik.http.services.opencti.loadbalancer.server.port=8080"
     depends_on:
       redis:
         condition: service_healthy
@@ -135,9 +115,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 20
-    networks:
-      - opencti
-      - traefik
   worker:
     image: opencti/worker:6.7.12
     environment:
@@ -147,15 +124,12 @@ services:
     depends_on:
       opencti:
         condition: service_healthy
-    #deploy:
-    #  mode: replicated
-    #  replicas: 3
+    deploy:
+      mode: replicated
+      replicas: 3
     restart: always
-    networks:
-      - opencti
   connector-export-file-stix:
     image: opencti/connector-export-file-stix:6.7.12
-    container_name: connector-export-file-stix_opencti
     environment:
       - OPENCTI_URL=http://opencti:8080
       - OPENCTI_TOKEN=${OPENCTI_ADMIN_TOKEN}
@@ -168,11 +142,8 @@ services:
     depends_on:
       opencti:
         condition: service_healthy
-    networks:
-      - opencti
   connector-export-file-csv:
     image: opencti/connector-export-file-csv:6.7.12
-    container_name: connector-export-file-csv_opencti
     environment:
       - OPENCTI_URL=http://opencti:8080
       - OPENCTI_TOKEN=${OPENCTI_ADMIN_TOKEN}
@@ -185,11 +156,8 @@ services:
     depends_on:
       opencti:
         condition: service_healthy
-    networks:
-      - opencti
   connector-export-file-txt:
     image: opencti/connector-export-file-txt:6.7.12
-    container_name: connector-export-file-txt_opencti
     environment:
       - OPENCTI_URL=http://opencti:8080
       - OPENCTI_TOKEN=${OPENCTI_ADMIN_TOKEN}
@@ -202,11 +170,8 @@ services:
     depends_on:
       opencti:
         condition: service_healthy
-    networks:
-      - opencti
   connector-import-file-stix:
     image: opencti/connector-import-file-stix:6.7.12
-    container_name: connector-import-file-stix_opencti
     environment:
       - OPENCTI_URL=http://opencti:8080
       - OPENCTI_TOKEN=${OPENCTI_ADMIN_TOKEN}
@@ -221,11 +186,8 @@ services:
     depends_on:
       opencti:
         condition: service_healthy
-    networks:
-      - opencti
   connector-import-document:
     image: opencti/connector-import-document:6.7.12
-    container_name: connector-import-document_opencti
     environment:
       - OPENCTI_URL=http://opencti:8080
       - OPENCTI_TOKEN=${OPENCTI_ADMIN_TOKEN}
@@ -242,11 +204,8 @@ services:
     depends_on:
       opencti:
         condition: service_healthy
-    networks:
-      - opencti
   connector-analysis:
     image: opencti/connector-import-document:6.7.12
-    container_name: connector-analysis_opencti
     environment:
       - OPENCTI_URL=http://opencti:8080
       - OPENCTI_TOKEN=${OPENCTI_ADMIN_TOKEN}
@@ -262,8 +221,6 @@ services:
     depends_on:
       opencti:
         condition: service_healthy
-    networks:
-      - opencti
 
 volumes:
   esdata:
@@ -272,9 +229,6 @@ volumes:
   amqpdata:
 
 networks:
-  opencti:
-    name: "opencti"
-    driver: bridge
   traefik:
-    name: "traefik"
     external: true
+    name: traefik
