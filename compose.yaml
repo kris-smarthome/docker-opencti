@@ -137,7 +137,6 @@ services:
       - traefik
   worker:
     image: opencti/worker:6.7.12
-    container_name: worker_opencti
     environment:
       - OPENCTI_URL=http://opencti:8080
       - OPENCTI_TOKEN=${OPENCTI_ADMIN_TOKEN}
