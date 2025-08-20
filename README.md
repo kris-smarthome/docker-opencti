@@ -1,5 +1,5 @@
 # docker-opencti
-docker compose files, local opencti install 
+docker compose files, local OpenCTI install 
 
 Services:
 - OpenCTI: Open Threat Intelligence platform
