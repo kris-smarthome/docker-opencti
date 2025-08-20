@@ -84,7 +84,7 @@ services:
     container_name: opencti
     environment:
       - NODE_OPTIONS=--max-old-space-size=8096
-      - APP__PORT=8080
+      - APP__PORT=8081
       - APP__BASE_URL=${OPENCTI_BASE_URL}
       - APP__ADMIN__EMAIL=${OPENCTI_ADMIN_EMAIL}
       - APP__ADMIN__PASSWORD=${OPENCTI_ADMIN_PASSWORD}
@@ -113,7 +113,7 @@ services:
       - PROVIDERS__LOCAL__STRATEGY=LocalStrategy
       - APP__HEALTH_ACCESS_KEY=${OPENCTI_HEALTHCHECK_ACCESS_KEY}
     ports:
-      - "8080:8081"
+      - "8081:8081"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.opencti.rule=Host(`${HTTPS_DOMAIN}`)"
@@ -131,7 +131,7 @@ services:
         condition: service_healthy
     restart: always
     healthcheck:
-      test:  ["CMD", "wget", "-qO-", "http://opencti:8080/health?health_access_key=${OPENCTI_HEALTHCHECK_ACCESS_KEY}"]
+      test:  ["CMD", "wget", "-qO-", "http://opencti:8081/health?health_access_key=${OPENCTI_HEALTHCHECK_ACCESS_KEY}"]
       interval: 10s
       timeout: 5s
       retries: 20
@@ -141,7 +141,7 @@ services:
   worker:
     image: opencti/worker:6.7.12
     environment:
-      - OPENCTI_URL=http://opencti:8080
+      - OPENCTI_URL=http://opencti:8081
       - OPENCTI_TOKEN=${OPENCTI_ADMIN_TOKEN}
       - WORKER_LOG_LEVEL=info
     depends_on:
@@ -157,7 +157,7 @@ services:
     image: opencti/connector-export-file-stix:6.7.12
     container_name: connector-export-file-stix_opencti
     environment:
-      - OPENCTI_URL=http://opencti:8080
+      - OPENCTI_URL=http://opencti:8081
       - OPENCTI_TOKEN=${OPENCTI_ADMIN_TOKEN}
       - CONNECTOR_ID=${CONNECTOR_EXPORT_FILE_STIX_ID} # Valid UUIDv4
       - CONNECTOR_TYPE=INTERNAL_EXPORT_FILE
@@ -174,7 +174,7 @@ services:
     image: opencti/connector-export-file-csv:6.7.12
     container_name: connector-export-file-csv_opencti
     environment:
-      - OPENCTI_URL=http://opencti:8080
+      - OPENCTI_URL=http://opencti:8081
       - OPENCTI_TOKEN=${OPENCTI_ADMIN_TOKEN}
       - CONNECTOR_ID=${CONNECTOR_EXPORT_FILE_CSV_ID} # Valid UUIDv4
       - CONNECTOR_TYPE=INTERNAL_EXPORT_FILE
@@ -191,7 +191,7 @@ services:
     image: opencti/connector-export-file-txt:6.7.12
     container_name: connector-export-file-txt_opencti
     environment:
-      - OPENCTI_URL=http://opencti:8080
+      - OPENCTI_URL=http://opencti:8081
       - OPENCTI_TOKEN=${OPENCTI_ADMIN_TOKEN}
       - CONNECTOR_ID=${CONNECTOR_EXPORT_FILE_TXT_ID} # Valid UUIDv4
       - CONNECTOR_TYPE=INTERNAL_EXPORT_FILE
@@ -208,7 +208,7 @@ services:
     image: opencti/connector-import-file-stix:6.7.12
     container_name: connector-import-file-stix_opencti
     environment:
-      - OPENCTI_URL=http://opencti:8080
+      - OPENCTI_URL=http://opencti:8081
       - OPENCTI_TOKEN=${OPENCTI_ADMIN_TOKEN}
       - CONNECTOR_ID=${CONNECTOR_IMPORT_FILE_STIX_ID} # Valid UUIDv4
       - CONNECTOR_TYPE=INTERNAL_IMPORT_FILE
@@ -227,7 +227,7 @@ services:
     image: opencti/connector-import-document:6.7.12
     container_name: connector-import-document_opencti
     environment:
-      - OPENCTI_URL=http://opencti:8080
+      - OPENCTI_URL=http://opencti:8081
       - OPENCTI_TOKEN=${OPENCTI_ADMIN_TOKEN}
       - CONNECTOR_ID=${CONNECTOR_IMPORT_DOCUMENT_ID} # Valid UUIDv4
       - CONNECTOR_TYPE=INTERNAL_IMPORT_FILE
@@ -248,7 +248,7 @@ services:
     image: opencti/connector-import-document:6.7.12
     container_name: connector-analysis_opencti
     environment:
-      - OPENCTI_URL=http://opencti:8080
+      - OPENCTI_URL=http://opencti:8081
       - OPENCTI_TOKEN=${OPENCTI_ADMIN_TOKEN}
       - CONNECTOR_ID=${CONNECTOR_ANALYSIS_ID} # Valid UUIDv4
       - CONNECTOR_TYPE=INTERNAL_ANALYSIS
