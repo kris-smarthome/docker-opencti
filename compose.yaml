@@ -92,7 +92,7 @@ services:
       - APP__APP_LOGS__LOGS_LEVEL=error
       #- APP__HTTPS_CERT__KEY=key_file.key
       #- APP__HTTPS_CERT__CRT=cert_file.crt
-      - APP__HTTPS_CERT__REJECT_UNAUTHORIZED=false
+      #- APP__HTTPS_CERT__REJECT_UNAUTHORIZED=false
       - REDIS__HOSTNAME=redis
       - REDIS__PORT=6379
       - ELASTICSEARCH__URL=${HTTPS_DOMAIN}
