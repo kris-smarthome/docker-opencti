@@ -304,7 +304,7 @@ services:
       - OPENCTI_TOKEN=${OPENCTI_ADMIN_TOKEN}
       # Connector's definition parameters REQUIRED
       - CONNECTOR_ID=${CONNECTOR_ABUSEIPDB_ID} # Valid UUIDv4
-      - "CONNECTOR_NAME=AbuseIPDB IP Blacklist"
+      - CONNECTOR_NAME=AbuseIPDB IP Blacklist
       - CONNECTOR_SCOPE=abuseipdb
       - CONNECTOR_LOG_LEVEL=error
       - CONNECTOR_DURATION_PERIOD=PT12H # ISO8601 format in String, start with 'P...' for Perio
@@ -339,7 +339,21 @@ services:
     networks:
       - opencti
 
-
+  connector-mitre:
+    image: opencti/connector-mitre:6.7.12
+    environment:
+      - OPENCTI_URL=http://opencti:8080
+      - OPENCTI_TOKEN=${OPENCTI_ADMIN_TOKEN}
+      - CONNECTOR_ID=${CONNECTOR_MITRE_ID}
+      - "CONNECTOR_NAME=MITRE Datasets"
+      - CONNECTOR_SCOPE=tool,report,malware,identity,campaign,intrusion-set,attack-pattern,course-of-action,x-mitre-data-source,x-mitre-data-component,x-mitre-matrix,x-mitre-tactic,x-mitre-collection
+      - CONNECTOR_RUN_AND_TERMINATE=false
+      - CONNECTOR_LOG_LEVEL=error
+      - MITRE_REMOVE_STATEMENT_MARKING=true
+      - MITRE_INTERVAL=7 # In days
+    restart: always
+    networks:
+      - opencti
 volumes:
   esdata:
   s3data:
