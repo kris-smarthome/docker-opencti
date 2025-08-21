@@ -296,7 +296,7 @@ services:
     networks:
       - opencti
 
-connector-abuseipdb-ipblacklist:
+  connector-abuseipdb-ipblacklist:
     image: opencti/connector-abuseipdb-ipblacklist:6.7.12
     environment:
       # Connector's generic execution parameters
